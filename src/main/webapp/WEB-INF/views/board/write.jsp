@@ -51,7 +51,7 @@ form>* {
 
 
 	<form action="${pageContext.request.contextPath }/board/write"
-		method="post" id="signupForm">
+		method="post" id="writeForm">
 		<div class="row mb-3" style="text-align: left;">
 			<div class="col">
 				<label>제목</label> <input type="text" name="title" id="title"
@@ -73,15 +73,24 @@ form>* {
 		</div>
 		<div class="row mt-3 d-flex justify-content-center">
 			<div class="col">
-				<button type="button" class="btn btn-secondary">취소</button>
+				<button type="button" class="btn btn-secondary" id="btn_back">취소</button>
 			</div>
 			<div class="col">
-				<button type="button" class="btn btn-primary">등록</button>
+				<button type="button" class="btn btn-primary" id="btn_submit">등록</button>
 			</div>
 		</div>
 	</form>
 
-
+<script>
+$(function(){
+	$('#btn_back').on('click',function(){
+		location.href="${pageContext.request.contextPath}/board/toBoard";
+	});
+	$('#btn_submit').on('click',function(){
+		$('#writeForm').submit();
+	});
+})
+</script>
 
 </body>
 </html>

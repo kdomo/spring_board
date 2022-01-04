@@ -48,8 +48,8 @@ padding: 8px;
 		</div>
 		<div class="row mb-3" style="text-align: left;">
 			<div class="col">
-				<input type="checkbox" class="form-check-input"> <label>아이디
-					기억하기</label>
+				<input type="checkbox" class="form-check-input" id="rememberId">
+				<label class="form-check-label">아이디 기억하기</label>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -64,8 +64,48 @@ padding: 8px;
 
 	<script>
 		$(function() {
+			
+			//쿠키값 가져오기
+			console.log(document.cookie);
+			let regex = /rememberId=(.*)/;
+			if(regex.test(document.cookie)){
+				let rememberId = RegExp.$1;
+				$('#id').val(rememberId);
+				$('#rememberId').attr("checked",true);
+			}
+			
+			 $("#rememberId").change(function(){
+				 if(!$('#rememberId').is(":checked")){
+					 deleteCookie();
+				 }
+			 })
+			
+			//쿠키 삭제
+			//쿠키는 삭제가 불가능함 -> 만료일이 되어야만 쿠키가 삭제됌
+			//만료일을 과거의 날짜로 덮어쓰기하여 삭제되게 함
+			function deleteCookie(){
+				let currentDate = new Date();
+				currentDate.setDate(currentDate.getDate() - 30);
+				let previousDate = currentDate;
+				document.cookie = "rememberId=;Expires="+previousDate;
+			}
+			
+			//쿠키 생성 아이디 기억하기 체크 후 로그인 하면 한달동안 저장
+			//오늘 날짜,한달이 지난 시점
+			//세션은 만료일을 지정해주지 않으면 세션과 똑같음 ->브라우저가 종료되면 삭제됌
+			function createCookie(){
+				let currentDate = new Date();
+				currentDate.setDate(currentDate.getDate() + 30);
+				let expiryDate = currentDate;
+				
+				//쿠키 생성
+				let key = "rememberId";
+				let value = $('#id').val();
+				
+				document.cookie = key+"="+value+";Expires="+expiryDate;
+			}
+			
 			let rs = "${rs}";
-			console.log(rs);
 
 			if (rs == "true") {
 				$('.alert').addClass("alert-primary");
@@ -103,6 +143,11 @@ padding: 8px;
 							$('.alert').removeClass("alert-danger");
 						}, 3000);
 					}else if(rs=="loginSuccess"){
+						if($('#rememberId').is(":checked")){
+							createCookie();
+						}else{
+							
+						}
 						location.href="${pageContext.request.contextPath}/member/toWelCome";
 					}
 				}).fail(function(e){
